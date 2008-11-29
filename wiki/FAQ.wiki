@@ -27,3 +27,7 @@ The aim of this page is to provide some information about this project in an FAQ
 
 * Can you create a support for other Pascal compilers ?
  I'm using FPC as my Pascal compiler. If you wish to add support for additional (and not instead of) Pascal compiler, please provide me with your patches and I'll add the support to your compiler as well.
+
+* Why does the file on the svn trunk are incomplete and broken ?
+  The svn trunk is a place where my raw work is set. Every now and then I'm updating my work and it does not have to be complete, but it's a type of backup.
+ If you wish to use the svn, use the tags (when I have a complete set of headers without the need to create additional binding to make them work, I'll add a tag to them making it known that they are ready to be used (please note that I also need to test the actual work of the functions, to be sure that they do work, and I do not do it at this time). 
