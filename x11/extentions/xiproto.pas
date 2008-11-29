@@ -336,7 +336,7 @@ type
  PxOpenDeviceReply = ^TxOpenDeviceReply;
  TxOpenDeviceReply = bitpacked record
                        repType          : TCARD8; // X_Reply
-                       RepType          : TCARD8; // always X_OpenDevice
+                       RepType2         : TCARD8; // always X_OpenDevice
                        sequenceNumber   : TCARD16;
                        length           : TCARD32;
                        num_classes      : TCARD8;
@@ -416,93 +416,101 @@ type
                                pad00     : TCARD16;
                              end;
 
-(*
-
-/*********************************************************
+(*********************************************************
  *
  * GetSelectedExtensionEvent.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_GetSelectedExtensionEvents */
-    CARD16 	length B16;
-    Window	window B32;
-} xGetSelectedExtensionEventsReq;
+ PxGetSelectedExtensionEventsReq = ^TxGetSelectedExtensionEventsReq;
+ TxGetSelectedExtensionEventsReq = bitpacked record
+                                     reqType  : TCARD8;  // input extension major code
+                                     ReqType2 : TCARD8;  // X_GetSelectedExtensionEvents
+                                     length   : TCARD16;
+                                     window   : TWindow;
+                                   end;
 
-typedef struct {
-    CARD8 	repType;  	/* X_Reply 			*/
-    CARD8 	RepType;       	/* GetSelectedExtensionEvents	*/
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD16 	this_client_count B16;
-    CARD16 	all_clients_count B16;
-    CARD32 	pad01 B32;
-    CARD32 	pad02 B32;
-    CARD32 	pad03 B32;
-    CARD32 	pad04 B32;
-    CARD32 	pad05 B32;
-} xGetSelectedExtensionEventsReply;
+ PxGetSelectedExtensionEventsReply = ^TxGetSelectedExtensionEventsReply;
+ TxGetSelectedExtensionEventsReply = bitpacked record
+                                       repType           : TCARD8;  // X_Reply
+                                       ReqType2          : TCARD8;  // GetSelectedExtensionEvents
+                                       sequenceNumber    : TCARD16;
+                                       length            : TCARD32;
+                                       this_client_count : TCARD16;
+                                       all_clients_count : TCARD16;
+                                       pad01,
+                                       pad02,
+                                       pad03,
+                                       pad04,
+                                       pad05             : TCARD32;
+                                     end;
 
-/*********************************************************
+(*********************************************************
  *
  * ChangeDeviceDontPropagateList.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_ChangeDeviceDontPropagateList */
-    CARD16 	length B16;
-    Window	window B32;
-    CARD16 	count B16;
-    CARD8 	mode;
-    BYTE	pad;
-} xChangeDeviceDontPropagateListReq;
+ PxChangeDeviceDontPropagateListReq = ^TxChangeDeviceDontPropagateListReq;
+ TxChangeDeviceDontPropagateListReq = bitpacked record
+                                        reqType    : TCARD8;   // input extension major code
+                                        ReqType2   : TCARD8;   // X_ChangeDeviceDontPropagateList
+                                        length     : TCARD16;
+                                        window     : TWindow;
+                                        count      : TCARD16;
+                                        mode       : TCARD8;
+                                        pad        : TByte;
+                                      end;
 
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceDontPropagateList.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_GetDeviceDontPropagateList */
-    CARD16 	length B16;
-    Window	window B32;
-} xGetDeviceDontPropagateListReq;
+ PxGetDeviceDontPropagateListReq = ^TxGetDeviceDontPropagateListReq;
+ TxGetDeviceDontPropagateListReq = bitpacked record
+                                     reqType  : TCARD8;  // input extension major code
+                                     ReqType2 : TCARD8;  // X_GetDeviceDontPropagateList
+                                     length   : TCARD16;
+                                     window   : TWindow;
+                                   end;
 
-typedef struct {
-    CARD8 	repType;  	/* X_Reply 			*/
-    CARD8 	RepType;        /* GetDeviceDontPropagateList   */
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD16 	count B16;
-    CARD16 	pad00 B16;
-    CARD32 	pad01 B32;
-    CARD32 	pad02 B32;
-    CARD32 	pad03 B32;
-    CARD32 	pad04 B32;
-    CARD32 	pad05 B32;
-    } xGetDeviceDontPropagateListReply;
+ PxGetDeviceDontPropagateListReply = ^TxGetDeviceDontPropagateListReply;
+ TxGetDeviceDontPropagateListReply = bitpacked record
+                                       repType        : TCARD8;  // X_Reply
+                                       ReqType2       : TCARD8;  // GetDeviceDontPropagateList
+                                       sequenceNumber : TCARD16;
+                                       length         : TCARD32;
+                                       count          : TCARD16;
+                                       pad00,
+                                       pad01,
+                                       pad02,
+                                       pad03,
+                                       pad04,
+                                       pad05          : TCARD32;
+                                     end;
 
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceMotionEvents.
  *
- */
+ *)
 
-typedef struct {
-    CARD8 	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* always X_GetDeviceMotionEvents*/
-    CARD16 	length B16;
-    Time 	start B32;
-    Time	stop B32;
-    CARD8	deviceid;
-    BYTE	pad1, pad2, pad3;
-} xGetDeviceMotionEventsReq;
+ PxGetDeviceMotionEventsReq = ^TxGetDeviceMotionEventsReq;
+ TxGetDeviceMotionEventsReq = bitpacked record
+                                reqType  : TCARD8;  // input extension major code
+                                ReqType2 : TCARD8;  // always X_GetDeviceMotionEvents
+                                length   : TCARD16;
+                                start    : TTime;
+                                stop     : TTime;
+                                deviceid : TCARD8;
+                                pad1,
+                                pad2,
+                                pad3     : TByte;
+                              end;
+
+(*
 
 typedef struct {
     CARD8 	repType;  	/* X_Reply */
