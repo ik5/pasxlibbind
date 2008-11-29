@@ -1,0 +1,13 @@
+The aim of this project is to provide Xlib and XCB binding for the Free Pascal
+compiler, while binding only headers that where not binded until now.
+
+This project is releases by BSD/X.net license. Because the X.net license was 
+revoked, I'm using the BSD license because it is the close to the X.net license.
+
+I hope this project will be part of the Free Pascal packages under x11/ 
+directory, however if not, you can use this repository.
+
+
+Ido Kanner
+idokan at gmail dot com
+
