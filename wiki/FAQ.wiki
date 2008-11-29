@@ -19,8 +19,8 @@ The aim of this page is to provide some information about this project in an FAQ
 
 * What is the license of the project ?
  The license of the project is actually dual license:
-  * X.NET license - It is the original license of Xlib, however it was revoked, so I'm using a close license as well.
-  * BSD license - It replaces the X.NET license, while keep the same idea of the original license.
+  * X.Org license - It is the original license of Xlib, however it was revoked, so I'm using a close license as well.
+  * BSD license - It replaces the X.Org license, while keep the same idea of the original license.
 
 * Can I help you in binding Xlib and/or XCB to Pascal ?
   Yes, thank you very much for the offer.
