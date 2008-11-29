@@ -663,126 +663,133 @@ type
                         pad1, pad2         : TByte;
                       end;
 
-(*
-
-/*********************************************************
+(*********************************************************
  *
  * UngrabDeviceKey.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* always X_UngrabDeviceKey 	*/
-    CARD16 	length B16;
-    Window 	grabWindow B32;
-    CARD16	modifiers B16;
-    CARD8 	modifier_device;
-    CARD8	key;
-    CARD8	grabbed_device;
-    BYTE	pad1, pad2, pad3;
-} xUngrabDeviceKeyReq;
-
-/*********************************************************
+ PxUngrabDeviceKeyReq = ^TxUngrabDeviceKeyReq;
+ TxUngrabDeviceKeyReq = bitpacked record
+                          reqType          : TCARD8;  // input extension major code
+                          ReqType2         : TCARD8;  // always X_UngrabDeviceKey
+                          length           : TCARD16;
+                          grabWindow       : TWindow;
+                          modifiers        : TCARD16;
+                          modifier_device  : TCARD8;
+                          key              : TCARD8;
+                          grabbed_device   : TCARD8;
+                          pad1, pad2, pad3 : TByte;
+                        end;
+(*********************************************************
  *
  * GrabDeviceButton.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* always X_GrabDeviceButton 	*/
-    CARD16 	length B16;
-    Window 	grabWindow B32;
-    CARD8	grabbed_device;
-    CARD8	modifier_device;
-    CARD16 	event_count B16;
-    CARD16 	modifiers B16;
-    BYTE 	this_device_mode;
-    BYTE 	other_devices_mode;
-    CARD8 	button;
-    BOOL 	ownerEvents;
-    BYTE	pad1, pad2;
-} xGrabDeviceButtonReq;
+ PxGrabDeviceButtonReq = ^TxGrabDeviceButtonReq;
+ TxGrabDeviceButtonReq = bitpacked record
+                           reqType            : TCARD8;  // input extension major code
+                           ReqType2           : TCARD8;  // always X_GrabDeviceButton
+                           length             : TCARD16;
+                           grabWindow         : TWindow;
+                           grabbed_device     : TCARD8;
+                           modifier_device    : TCARD8;
+                           event_count        : TCARD16;
+                           modifiers          : TCARD16;
+                           this_device_mode   : TByte;
+                           other_devices_mode : TByte;
+                           button             : TCARD8;
+                           ownerEvents        : TBool;
+                           pad1, pad2         : TByte;
+                         end;
 
-/*********************************************************
+(*********************************************************
  *
  * UngrabDeviceButton.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* always X_UngrabDeviceButton 	*/
-    CARD16 	length B16;
-    Window 	grabWindow B32;
-    CARD16 	modifiers B16;
-    CARD8 	modifier_device;
-    CARD8 	button;
-    CARD8 	grabbed_device;
-    BYTE	pad1, pad2, pad3;
-} xUngrabDeviceButtonReq;
+ PxUngrabDeviceButtonReq = ^TxUngrabDeviceButtonReq;
+ TxUngrabDeviceButtonReq = bitpacked record
+                             reqType          : TCARD8;  // input extension major code
+                             ReqType2         : TCARD8;  // always X_UngrabDeviceButton
+                             length           : TCARD16;
+                             grabWindow       : TWindow;
+                             modifiers        : TCARD16;
+                             modifier_device  : TCARD8;
+                             button           : TCARD8;
+                             grabbed_device   : TCARD8;
+                             pad1, pad2, pad3 : TByte;
+                           end;
 
-/*********************************************************
+(*********************************************************
  *
  * AllowDeviceEvents.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* always X_AllowDeviceEvents 	*/
-    CARD16 	length B16;
-    Time 	time B32;
-    CARD8	mode;
-    CARD8 	deviceid;
-    BYTE	pad1, pad2;
-} xAllowDeviceEventsReq;
+ PxAllowDeviceEventsReq = ^TxAllowDeviceEventsReq;
+ TxAllowDeviceEventsReq = bitpacked record
+                            reqType    : TCARD8;  // input extension major code
+                            ReqType2   : TCARD8;  // always X_AllowDeviceEvents
+                            length     : TCARD16;
+                            time       : TTime;
+                            mode       : TCARD8;
+                            deviceid   : TCARD8;
+                            pad1, pad2 : TByte;
+                          end;
 
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceFocus.
  *
- */
+ *)
 
-typedef struct {
-    CARD8 	reqType;        /* input extension major code   */
-    CARD8 	ReqType;        /* always X_GetDeviceFocus 	*/
-    CARD16 	length B16;
-    CARD8 	deviceid;
-    BYTE 	pad1, pad2, pad3;
-} xGetDeviceFocusReq;
+ PxGetDeviceFocusReq = ^TxGetDeviceFocusReq;
+ TxGetDeviceFocusReq = bitpacked record
+                         reqType          : TCARD8;  // input extension major code
+                         ReqType2         : TCARD8;  // always X_GetDeviceFocus
+                         length           : TCARD16;
+                         deviceid         : TCARD8;
+                         pad1, pad2, pad3 : TByte;
+                       end;
 
-typedef struct {
-    CARD8 	repType;  	/* X_Reply 			*/
-    CARD8 	RepType;        /* always X_GetDeviceFocus  	*/
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD32 	focus B32;
-    Time 	time B32;
-    CARD8  	revertTo;
-    BYTE 	pad1, pad2, pad3;
-    CARD32 	pad01 B32;
-    CARD32 	pad02 B32;
-    CARD32 	pad03 B32;
-    } xGetDeviceFocusReply;
+ PxGetDeviceFocusReply = ^TxGetDeviceFocusReply;
+ TxGetDeviceFocusReply = bitpacked record
+                           repType          : TCARD8;  // X_Reply
+                           RepType2         : TCARD8;  // always X_GetDeviceFocus
+                           sequenceNumber   : TCARD16;
+                           length           : TCARD32;
+                           focus            : TCARD32;
+                           time             : TTime;
+                           revertTo         : TCARD8;
+                           pad1, pad2, pad3 : TByte;
+                           pad01,
+                           pad02,
+                           pad03            : TCARD32;
+                         end;
 
-/*********************************************************
+(*********************************************************
  *
  * SetDeviceFocus.
  *
- */
+ *)
 
-typedef struct {
-    CARD8 	reqType;        /* input extension major code   */
-    CARD8 	ReqType;        /* always X_SetDeviceFocus 	*/
-    CARD16 	length B16;
-    Window 	focus B32;
-    Time   	time B32;
-    CARD8  	revertTo;
-    CARD8  	device;
-    CARD16 	pad01 B16;
-} xSetDeviceFocusReq;
+ PxSetDeviceFocusReq = ^TxSetDeviceFocusReq;
+ TxSetDeviceFocusReq = bitpacked record
+                         reqType  : TCARD8;  // input extension major code
+                         ReqType2 : TCARD8;  // always X_SetDeviceFocus
+                         length   : TCARD16;
+                         focus    : TWindow;
+                         time     : TTime;
+                         revertTo : TCARD8;
+                         device   : TCARD8;
+                         pad01    : TCARD16;
+                       end;
+
+
+(*
 
 /*********************************************************
  *
