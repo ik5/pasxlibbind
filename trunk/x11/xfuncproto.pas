@@ -30,7 +30,7 @@ unit xfuncproto;
 
 {$mode fpc}{$PACKRECORDS C}{$MACRO ON}{$CALLING CDECL}
 
-{$NOTE The origial header never seems to be used with it's content, and some of the defenitions are unable to be translated to pascal, so most code is commented}
+{$NOTE The origial header never seems to be used with it's content, and some of the defenitions are unable to be translated to pascal, so most of the code is commented }
 
 interface
 uses ctypes;
