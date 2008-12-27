@@ -123,21 +123,21 @@ uses ctypes, X, xlib;
  * (or even unsigned) according to ANSI C.
  */
 #ifdef WORD64
-typedef long INT64;
-typedef unsigned long CARD64;
-#define B32 :32
-#define B16 :16
-#ifdef UNSIGNEDBITFIELDS
-typedef unsigned int INT32;
-typedef unsigned int INT16;
-#else
-#ifdef __STDC__
-typedef signed int INT32;
-typedef signed int INT16;
-#else
-typedef int INT32;
-typedef int INT16;
-#endif
+  typedef long INT64;
+  typedef unsigned long CARD64;
+  #define B32 :32
+  #define B16 :16
+  #ifdef UNSIGNEDBITFIELDS
+    typedef unsigned int INT32;
+    typedef unsigned int INT16;
+  #else
+  #ifdef __STDC__
+    typedef signed int INT32;
+    typedef signed int INT16;
+  #else
+    typedef int INT32;
+    typedef int INT16;
+  #endif
 #endif
 #else
 #define B32
