@@ -62,9 +62,20 @@ type
 {$IFDEF CPU64}
   TCARD64 = culong;
   TCARD32 = cuint;
+  TINT64  = clong;
+  {$IFDEF UNSIGNEDBITFIELDS}
+    TINT32 = cuint32;
+    TINT16 = cuint16;
+  {$ELSE UNSIGNEDBITFIELDS}
+    TINT32 = cint32;
+    TINT16 = cint16;
+  {$ENDIF}
 {$ELSE CPU64}
 {$IFDEF CPU32}
   TCARD32 = culong;
+  TINT64  = cint64;
+  TINT32  = cint32;
+  TINT16  = cint16;
 {$ENDIF CPU32}
 {$ENDIF CPU64}
 
@@ -788,136 +799,120 @@ type
                          pad01    : TCARD16;
                        end;
 
-
-(*
-
-/*********************************************************
+(*********************************************************
  *
  * GetFeedbackControl.
  *
- */
+ *)
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_GetFeedbackControl  	*/
-    CARD16 	length B16;
-    CARD8 	deviceid;
-    BYTE	pad1, pad2, pad3;
-} xGetFeedbackControlReq;
+ PxGetFeedbackControlReq = ^TxGetFeedbackControlReq;
+ TxGetFeedbackControlReq = bitpacked record
+                             reqType          : TCARD8;   // input extension major code
+                             ReqType2         : TCARD8;   // X_GetFeedbackControl
+                             length           : TCARD16;
+                             deviceid         : TCARD8;
+                             pad1, pad2, pad3 : TByte;
+                           end;
 
-typedef struct {
-    CARD8  	repType;  	/* X_Reply 			*/
-    CARD8  	RepType;        /* always X_GetFeedbackControl 	*/
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD16	num_feedbacks B16;
-    CARD16	pad01 B16;
-    CARD32	pad02 B32;
-    CARD32	pad03 B32;
-    CARD32	pad04 B32;
-    CARD32	pad05 B32;
-    CARD32	pad06 B32;
-} xGetFeedbackControlReply;
+ PxGetFeedbackControlReply = ^TxGetFeedbackControlReply;
+ TxGetFeedbackControlReply = bitpacked record
+                               reqType          : TCARD8;   // input extension major code
+                               ReqType2         : TCARD8;   // always X_GetFeedbackControl
+                               sequenceNumber   : TCARD16;
+                               length           : TCARD32;
+                               num_feedbacks    : TCARD16;
+                               pad01            : TCARD16;
+                               pad02            : TCARD32;
+                               pad03            : TCARD32;
+                               pad04            : TCARD32;
+                               pad05            : TCARD32;
+                               pad06            : TCARD32;
+                             end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class; 	/* feedback class		*/
-#else
-    CARD8  	class; 		/* feedback class		*/
-#endif
-    CARD8  	id; 		/* feedback id    		*/
-    CARD16  	length B16; 	/* feedback length		*/
-} xFeedbackState;
+ PxFeedbackState = ^TxFeedbackState;
+ TxFeedbackState = bitpacked record
+                     c_class : TCARD8;  // feedback class
+                     id      : TCARD8;  // feedback id
+                     length  : TCARD16; // feedback length
+                   end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8   c_class;
-#else
-    CARD8   class;
-#endif
-    CARD8   id;
-    CARD16  length B16;
-    CARD16  pitch B16;
-    CARD16  duration B16;
-    CARD32  led_mask B32;
-    CARD32  led_values B32;
-    BOOL    global_auto_repeat;
-    CARD8   click;
-    CARD8   percent;
-    BYTE    pad;
-    BYTE    auto_repeats[32];
-} xKbdFeedbackState;
+ PxKbdFeedbackState = ^TxKbdFeedbackState;
+ TxKbdFeedbackState = bitpacked record
+                        c_class            : TCARD8;
+                        id                 : TCARD8;
+                        length             : TCARD16;
+                        pitch              : TCARD16;
+                        duration           : TCARD16;
+                        led_mask           : TCARD32;
+                        led_values         : TCARD32;
+                        global_auto_repeat : cbool;
+                        click              : TCARD8;
+                        percent            : TCARD8;
+                        pad                : TByte;
+                        auto_repeats       : array[0..31] of TByte;
+                      end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8   c_class;
-#else
-    CARD8   class;
-#endif
-    CARD8   id;
-    CARD16  length B16;
-    CARD8   pad1,pad2;
-    CARD16  accelNum B16;
-    CARD16  accelDenom B16;
-    CARD16  threshold B16;
-} xPtrFeedbackState;
+ PxPtrFeedbackState = ^TxPtrFeedbackState;
+ TxPtrFeedbackState = bitpacked record
+                        c_class    : TCARD8;
+                        id         : TCARD8;
+                        length     : TCARD16;
+                        pad1, pad2 : TCARD8;
+                        accelNum   : TCARD16;
+                        accelDenom : TCARD16;
+                        threshold  : TCARD16;
+                      end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8   	id;
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD32	resolution B32;
-    INT32	min_value B32;
-    INT32	max_value B32;
-} xIntegerFeedbackState;
+ PxIntegerFeedbackState = ^TxIntegerFeedbackState;
+ TxIntegerFeedbackState = bitpacked record
+                            c_class    : TCARD8;   // feedback class id
+                            id         : TCARD8;
+                            length     : TCARD16;  // feedback length
+                            resolution : TCARD32;
+                            min_value  : TINT32;
+                            max_value  : TINT32;
+                          end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8   	id;
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD16	max_symbols B16;
-    CARD16	num_syms_supported B16;
-} xStringFeedbackState;
+ PxStringFeedbackState = ^TxStringFeedbackState;
+ TxStringFeedbackState = bitpacked record
+                           c_class            : TCARD8;   // feedback class id
+                           id                 : TCARD8;
+                           length             : TCARD16;  // feedback length
+                           max_symbols        : TCARD16;
+                           num_syms_supported : TCARD16;
+                         end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8	id;
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD8	percent;
-    BYTE	pad1, pad2, pad3;
-    CARD16	pitch B16;
-    CARD16	duration B16;
-} xBellFeedbackState;
+ PxBellFeedbackState = ^TxBellFeedbackState;
+ TxBellFeedbackState = bitpacked record
+                         c_class          : TCARD8;   // feedback class id
+                         id               : TCARD8;
+                         length           : TCARD16;  // feedback length
+                         percent          : TCARD8;
+                         pad1, pad2, pad3 : TByte;
+                         pitch            : TCARD16;
+                         duration         : TCARD16;
+                       end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8	id;
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD32	led_mask B32;
-    CARD32	led_values B32;
-} xLedFeedbackState;
+ PxLedFeedbackState = ^TxLedFeedbackState;
+ TxLedFeedbackState = bitpacked record
+                        c_class    : TCARD8;   // feedback class id
+                        id         : TCARD8;
+                        length     : TCARD16;  // feedback length
+                        led_mask   : TCARD32;
+                        led_values : TCARD32;
+                      end;
 
-/*********************************************************
+(*********************************************************
  *
  * ChangeFeedbackControl.
  *
- */
+ *)
+
+
+
+(*
+
+
 
 typedef struct {
     CARD8	reqType;	/* input extension major code	*/
