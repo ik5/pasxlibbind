@@ -907,48 +907,40 @@ type
  * ChangeFeedbackControl.
  *
  *)
+ PxChangeFeedbackControlReq = ^TxChangeFeedbackControlReq;
+ TxChangeFeedbackControlReq = bitpacked record
+                                reqType    : TCARD8;  // input extension major code
+                                ReqType2   : TCARD8;  // X_ChangeFeedbackControl
+                                length     : TCARD16;
+                                mask       : TCARD32;
+                                deviceid   : TCARD8;
+                                feedbackid : TCARD8;
+                                pad1, pad2 : TByte;
+                              end;
+
+ PxFeedbackCtl = ^TxFeedbackCtl;
+ TxFeedbackCtl = bitpacked record
+                   c_class  : TCARD8;  // feedback class id
+                   id       : TCARD8;  // feedback id
+                   length   : TCARD16; // feedback length
+                 end;
+
+ PxKbdFeedbackCtl = ^TxKbdFeedbackCtl;
+ TxKbdFeedbackCtl = bitpacked record
+                      c_class          : TCARD8;   // feedback class id
+                      id               : TCARD8;   // feedback id
+                      length           : TCARD16;  // feedback length
+                      key              : TKeyCode;
+                      auto_repeat_mode : TCARD8;
+                      click            : TINT8;
+                      percent          : TINT8;
+                      pitch            : TINT16;
+                      duration         : TINT16;
+                      led_mask         : TCARD32;
+                      led_values       : TCARD32;
+                    end;
 
 (*
-
-
-
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_ChangeFeedbackControl  	*/
-    CARD16 	length B16;
-    CARD32	mask B32;
-    CARD8  	deviceid;
-    CARD8  	feedbackid;
-    BYTE	pad1, pad2;
-} xChangeFeedbackControlReq;
-
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback id      		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-} xFeedbackCtl;
-
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback length  		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-    KeyCode 	key;
-    CARD8	auto_repeat_mode;
-    INT8	click;
-    INT8	percent;
-    INT16	pitch B16;
-    INT16	duration B16;
-    CARD32	led_mask B32;
-    CARD32	led_values B32;
-} xKbdFeedbackCtl;
 
 typedef struct {
 #if defined(__cplusplus) || defined(c_plusplus)
