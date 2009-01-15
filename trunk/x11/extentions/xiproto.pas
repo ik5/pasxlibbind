@@ -940,176 +940,164 @@ type
                       led_values       : TCARD32;
                     end;
 
-(*
+ PxPtrFeedbackCtl = ^TxPtrFeedbackCtl;
+ TxPtrFeedbackCtl = bitpacked record
+                      c_class    : TCARD8;  // feedback class id
+                      id         : TCARD8;  // feedback id
+                      length     : TCARD16; // feedback length
+                      pad1, pad2 : TCARD8;
+                      num        : TINT16;
+                      denom      : TINT16;
+                      thresh     : TINT16;
+                    end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback id      		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD8  	pad1,pad2;
-    INT16	num B16;
-    INT16	denom B16;
-    INT16	thresh B16;
-} xPtrFeedbackCtl;
+  PxIntegerFeedbackCtl = ^TxIntegerFeedbackCtl;
+  TxIntegerFeedbackCtl = bitpacked record
+                           c_class        : TCARD8;  // feedback class id
+                           id             : TCARD8;  // feedback id
+                           length         : TCARD16; // feedback length
+                           int_to_display : TINT32;
+                         end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback id      		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-    INT32	int_to_display B32;
-} xIntegerFeedbackCtl;
+ PxStringFeedbackCtl = ^TxStringFeedbackCtl;
+ TxStringFeedbackCtl = bitpacked record
+                         c_class     : TCARD8;  // feedback class id
+                         id          : TCARD8;  // feedback id
+                         length      : TCARD16; // feedback length
+                         pad1, pad2  : TCARD8;
+                         num_keysyms : TCARD16;
+                       end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback id      		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD8  	pad1,pad2;
-    CARD16	num_keysyms B16;
-} xStringFeedbackCtl;
+ PxBellFeedbackCtl = ^TxBellFeedbackCtl;
+ TxBellFeedbackCtl = bitpacked record
+                       c_class          : TCARD8;  // feedback class id
+                       id               : TCARD8;  // feedback id
+                       length           : TCARD16; // feedback length
+                       percent          : TINT8;
+                       pad1, pad2, pad3 : TByte;
+                       pitch            : TINT16;
+                       duration         : TINT16;
+                     end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback id      		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-    INT8	percent;
-    BYTE	pad1, pad2, pad3;
-    INT16	pitch B16;
-    INT16	duration B16;
-} xBellFeedbackCtl;
+ PxLedFeedbackCtl = ^TxLedFeedbackCtl;
+ TxLedFeedbackCtl = bitpacked record
+                      c_class    : TCARD8;  // feedback class id
+                      id         : TCARD8;  // feedback id
+                      length     : TCARD16; // feedback length
+                      led_mask   : TCARD32;
+                      led_values : TCARD32;
+                    end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;  	/* feedback class id		*/
-#else
-    CARD8  	class;  	/* feedback class id		*/
-#endif
-    CARD8  	id; 		/* feedback id      		*/
-    CARD16  	length B16; 	/* feedback length  		*/
-    CARD32	led_mask B32;
-    CARD32	led_values B32;
-} xLedFeedbackCtl;
-
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceKeyMapping.
  *
- */
+ *)
+ PxGetDeviceKeyMappingReq =^TxGetDeviceKeyMappingReq;
+ TxGetDeviceKeyMappingReq = bitpacked record
+                              reqType      : TCARD8;   // input extension major code
+                              ReqType2     : TCARD8;   // always X_GetDeviceKeyMapping
+                              length       : TCARD16;
+                              deviceid     : TCARD8;
+                              firstKeyCode : TKeyCode;
+                              count        : TCARD8;
+                              pad1         : TByte;
+                            end;
 
-typedef struct {
-    CARD8 	reqType;        /* input extension major code   */
-    CARD8 	ReqType;     	/* always X_GetDeviceKeyMapping */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    KeyCode 	firstKeyCode;
-    CARD8 	count;
-    BYTE	pad1;
-} xGetDeviceKeyMappingReq;
+ PxGetDeviceKeyMappingReply = ^TxGetDeviceKeyMappingReply;
+ TxGetDeviceKeyMappingReply = bitpacked record
+                                reqType           : TCARD8;   // X_Reply
+                                ReqType2          : TCARD8;   // always X_GetDeviceKeyMapping
+                                sequenceNumber    : TCARD16;
+                                length            : TCARD32;
+                                keySymsPerKeyCode : TCARD8;
+                                pad0              : TCARD8;
+                                pad1              : TCARD16;
+                                pad2              : TCARD32;
+                                pad3              : TCARD32;
+                                pad4              : TCARD32;
+                                pad5              : TCARD32;
+                                pad6              : TCARD32;
+                              end;
 
-typedef struct {
-    CARD8  	repType;  	/* X_Reply 			*/
-    CARD8  	RepType;       	/* always X_GetDeviceKeyMapping */
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8  	keySymsPerKeyCode;
-    CARD8  	pad0;
-    CARD16 	pad1 B16;
-    CARD32 	pad2 B32;
-    CARD32 	pad3 B32;
-    CARD32 	pad4 B32;
-    CARD32 	pad5 B32;
-    CARD32 	pad6 B32;
-} xGetDeviceKeyMappingReply;
-
-/*********************************************************
+(*********************************************************
  *
  * ChangeDeviceKeyMapping.
  *
- */
+ *)
+ PxChangeDeviceKeyMappingReq = ^TxChangeDeviceKeyMappingReq;
+ TxChangeDeviceKeyMappingReq = bitpacked record
+                                 reqType           : TCARD8;   // input extension major code
+                                 ReqType2          : TCARD8;   // always X_ChangeDeviceKeyMapping
+                                 length            : TCARD16;
+                                 deviceid          : TCARD8;
+                                 firstKeyCode      : TKeyCode;
+                                 keySymsPerKeyCode : TCARD8;
+                                 keyCodes          : TCARD8;
+                               end;
 
-typedef struct {
-    CARD8 	reqType;        /* input extension major code   */
-    CARD8 	ReqType;        /* always X_ChangeDeviceKeyMapping */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    KeyCode 	firstKeyCode;
-    CARD8 	keySymsPerKeyCode;
-    CARD8 	keyCodes;
-} xChangeDeviceKeyMappingReq;
-
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceModifierMapping.
  *
- */
+ *)
+ PxGetDeviceModifierMappingReq = ^TxGetDeviceModifierMappingReq;
+ TxGetDeviceModifierMappingReq = bitpacked record
+                                   reqType          : TCARD8;   // input extension major code
+                                   ReqType2         : TCARD8;   // always X_GetDeviceModifierMapping
+                                   length           : TCARD16;
+                                   deviceid         : TCARD8;
+                                   pad1, pad2, pad3 : TByte;
+                                 end;
 
-typedef struct {
-    CARD8 	reqType;        /* input extension major code   */
-    CARD8 	ReqType;        /* always X_GetDeviceModifierMapping */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    BYTE	pad1, pad2, pad3;
-} xGetDeviceModifierMappingReq;
+ PxGetDeviceModifierMappingReply = ^TxGetDeviceModifierMappingReply;
+ TxGetDeviceModifierMappingReply = bitpacked record
+                                     reqType           : TCARD8;   // X_Reply
+                                     ReqType2          : TCARD8;   // always X_GetDeviceModifierMapping
+                                     sequenceNumber    : TCARD16;
+                                     length            : TCARD32;
+                                     numKeyPerModifier : TCARD8;
+                                     pad0              : TCARD8;
+                                     pad1              : TCARD16;
+                                     pad2              : TCARD32;
+                                     pad3              : TCARD32;
+                                     pad4              : TCARD32;
+                                     pad5              : TCARD32;
+                                     pad6              : TCARD32;
+                                   end;
 
-typedef struct {
-    CARD8  	repType;  	/* X_Reply */
-    CARD8  	RepType;        /* always X_GetDeviceModifierMapping */
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8  	numKeyPerModifier;
-    CARD8  	pad0;
-    CARD16 	pad1 B16;
-    CARD32 	pad2 B32;
-    CARD32 	pad3 B32;
-    CARD32 	pad4 B32;
-    CARD32 	pad5 B32;
-    CARD32 	pad6 B32;
-} xGetDeviceModifierMappingReply;
-
-/*********************************************************
+(*********************************************************
  *
  * SetDeviceModifierMapping.
  *
- */
+ *)
+ PxSetDeviceModifierMappingReq = ^TxSetDeviceModifierMappingReq;
+ TxSetDeviceModifierMappingReq = bitpacked record
+                                   reqType           : TCARD8;   // input extension major code
+                                   ReqType2          : TCARD8;   // always X_SetDeviceModifierMapping
+                                   length            : TCARD16;
+                                   deviceid          : TCARD8;
+                                   numKeyPerModifier : TCARD8;
+                                   pad1              : TCARD16;
+                                 end;
 
-typedef struct {
-    CARD8 	reqType;        /* input extension major code   */
-    CARD8 	ReqType;        /* always X_SetDeviceModifierMapping */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    CARD8   	numKeyPerModifier;
-    CARD16  	pad1 B16;
-} xSetDeviceModifierMappingReq;
+ PxSetDeviceModifierMappingReply = ^TxSetDeviceModifierMappingReply;
+ TxSetDeviceModifierMappingReply = bitpacked record
+                                     reqType        : TCARD8;   // X_Reply
+                                     ReqType2       : TCARD8;   // always X_SetDeviceModifierMapping
+                                     sequenceNumber : TCARD16;
+                                     length         : TCARD32;
+                                     success        : TCARD8;
+                                     pad0           : TCARD8;
+                                     pad1           : TCARD16;
+                                     pad2           : TCARD32;
+                                     pad3           : TCARD32;
+                                     pad4           : TCARD32;
+                                     pad5           : TCARD32;
+                                     pad6           : TCARD32;
+                                   end;
+(*
 
-typedef struct {
-    CARD8  	repType;  	/* X_Reply */
-    CARD8  	RepType;        /* always X_SetDeviceModifierMapping */
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8  	success;
-    CARD8  	pad0;
-    CARD16 	pad1 B16;
-    CARD32 	pad2 B32;
-    CARD32 	pad3 B32;
-    CARD32 	pad4 B32;
-    CARD32 	pad5 B32;
-    CARD32 	pad6 B32;
-} xSetDeviceModifierMappingReply;
 
 /*********************************************************
  *
