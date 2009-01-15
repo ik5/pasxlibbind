@@ -50,7 +50,7 @@ unit xiproto;
 
 {$mode fpc}{$PACKRECORDS C}{$MACRO ON}{$CALLING CDECL}
 
-{$DEFINE NoXMD}
+{.$DEFINE NoXMD}
 
 interface
 
@@ -81,8 +81,8 @@ type
 
    TCARD16 = cushort;
    TCARD8  = cuchar;
-   TByte   = TCARD8;
-   TBool   = TCARD8;
+   TByte   = cuchar;
+   TBool   = cuchar;
 {$ENDIF NoXMD}
 
 // make sure types have right sizes for protocol structures.
@@ -907,8 +907,6 @@ type
  * ChangeFeedbackControl.
  *
  *)
-
-
 
 (*
 
