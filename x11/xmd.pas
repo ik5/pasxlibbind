@@ -47,6 +47,15 @@ SOFTWARE.
 
 ******************************************************************)
 
+{$IFNDEF FPC}
+  This code was created using the Free Pascal Compiler. Please make sure that the code works for other compilers before using it.
+{$ENDIF}
+
+{$IFNDEF CPU32}
+  {$IFNDEF CPU64}
+    {$WARNING 'This code was tested only on a 32 and 64 bit x86_64 cpu, the code might not work properly on different CPU.'}
+   {$ENDIF}
+{$ENDIF}
 
 unit Xmd;
 
@@ -62,7 +71,7 @@ uses ctypes, X, xlib;
 
 (*
  * Special per-machine configuration flags.
- *)
+*)
 
 
 {
@@ -71,32 +80,21 @@ uses ctypes, X, xlib;
 #endif
 }
 
-(*
-#ifdef CRAY
-#define WORD64				/* 64-bit architecture */
-#endif
-#if defined (_LP64) || \
-    defined(__alpha) || defined(__alpha__) || \
-    defined(__ia64__) || defined(ia64) || \
-    defined(__sparc64__) || \
-    defined(__s390x__) || \
-    (defined(__hppa__) && defined(__LP64__)) || \
-    defined(__amd64__) || defined(amd64) || \
-    defined(__powerpc64__) || \
-    (defined(sgi) && (_MIPS_SZLONG == 64))
-#define LONG64				/* 32/64-bit architecture */
-#endif
+{$IFDEF CPU64}
+  {$DEFINE WORD64 := 1} // 64-bit architecture
+  {$DEFINE LONG64 := 1}
+{$ENDIF}
 
-/*
+(*
  * Stuff to handle large architecture machines; the constants were generated
  * on a 32-bit machine and must correspond to the protocol.
- */
-#ifdef WORD64
-#define MUSTCOPY
-#endif /* WORD64 */
+ *)
 
+{$IFDEF WORD64}
+  {$DEFINE MUSTCOPY := 1}
+{$ENDIF}
 
-/*
+(*
  * Definition of macro used to set constants for size of network structures;
  * machines with preprocessors that can't handle all of the sz_ symbols
  * can define this macro to be sizeof(x) if and only if their compiler doesn't
@@ -109,7 +107,10 @@ uses ctypes, X, xlib;
  *
  * The extra indirection in the __STDC__ case is to get macro arguments to
  * expand correctly before the concatenation, rather than afterward.
- */
+ *)
+
+(*
+
 #if ((defined(__STDC__) || defined(__cplusplus) || defined(c_plusplus)) && !defined(UNIXCPP)) || defined(ANSICPP)
 #define _SIZEOF(x) sz_##x
 #define SIZEOF(x) _SIZEOF(x)
@@ -117,69 +118,58 @@ uses ctypes, X, xlib;
 #define SIZEOF(x) sz_/**/x
 #endif /* if ANSI C compiler else not */
 
-/*
+*)
+
+(*
  * Bitfield suffixes for the protocol structure elements, if you
  * need them.  Note that bitfields are not guaranteed to be signed
  * (or even unsigned) according to ANSI C.
- */
-#ifdef WORD64
-  typedef long INT64;
-  typedef unsigned long CARD64;
-  #define B32 :32
-  #define B16 :16
-  #ifdef UNSIGNEDBITFIELDS
-    typedef unsigned int INT32;
-    typedef unsigned int INT16;
-  #else
-  #ifdef __STDC__
-    typedef signed int INT32;
-    typedef signed int INT16;
-  #else
-    typedef int INT32;
-    typedef int INT16;
-  #endif
-#endif
-#else
-#define B32
-#define B16
-#ifdef LONG64
-typedef long INT64;
-typedef int INT32;
-#else
-typedef long INT32;
-#endif
-typedef short INT16;
-#endif
+ *)
 
-#if defined(__STDC__) || defined(sgi) || defined(_AIX)
-typedef signed char    INT8;
-#else
-typedef char           INT8;
-#endif
+type
+{$IFDEF WORD64}
+  TINT64  = clong;
+  {$IFDEF UNSIGNEDBITFIELDS}
+    TINT32 = cuint32;
+    TINT16 = cuint16;
+  {$ELSE UNSIGNEDBITFIELDS}
+    TINT32 = cint32;
+    TINT16 = cint16;
+  {$ENDIF UNSIGNEDBITFIELDS}
+{$ELSE WORD64}
+  {$IFDEF LONG64}
+     TINT64 = clong;
+     TINT32 = cint;
+  {$ELSE LONG64}
+     TINT32 = clong;
+  {$ENDIF LONG64}
+  TINT16 = cshort;
+{$ENDIF WORD64}
 
-#ifdef LONG64
-typedef unsigned long CARD64;
-typedef unsigned int CARD32;
-#else
-typedef unsigned long CARD32;
-#endif
-#if !defined(WORD64) && !defined(LONG64)
-typedef unsigned long long CARD64;
-#endif
-typedef unsigned short CARD16;
-typedef unsigned char  CARD8;
+ TINT8 = cschar;
 
-typedef CARD32		BITS32;
-typedef CARD16		BITS16;
+{$IFDEF LONG64}
+  TCARD64 = culong;
+  TCARD32 = cuint;
+{$ELSE LONG64}
+  TCARD32 = culong;
+{$ENDIF LONG64}
+{$IF not defined(WORD64) and not defined(LONG64)}
+   TCARD64 = culonglong;
+{$ENDIF}
 
-#ifndef I_NEED_OS2_H
-typedef CARD8		BYTE;
-typedef CARD8		BOOL;
-#else
-#define BYTE	CARD8
-#define BOOL	CARD8
-#endif
+ TCARD16 = cushort;
+ TCARD8  = cuchar;
 
+ BITS32  = TCARD32;
+ BITS16  = TCARD16;
+
+ TByte   = cuchar;
+ TBool   = cuchar;
+
+
+
+(* The preprocessor of C does not use the rest of the code...
 /*
  * definitions for sign-extending bitfields on 64-bit architectures
  */
