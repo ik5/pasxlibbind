@@ -33,7 +33,7 @@ unit XKBsrv;
 interface
 
 uses
-  ctypes, x, xlib, xkb, xkblib, xkb;
+  ctypes, x, xlib, xkb, xkblib;
 
 (*
 
