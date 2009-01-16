@@ -1096,277 +1096,278 @@ type
                                      pad5           : TCARD32;
                                      pad6           : TCARD32;
                                    end;
-(*
 
-
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceButtonMapping.
  *
- */
+ *)
+ PxGetDeviceButtonMappingReq = ^TxGetDeviceButtonMappingReq;
+ TxGetDeviceButtonMappingReq = bitpacked record
+                                 reqType          : TCARD8;   // input extension major code
+                                 ReqType2         : TCARD8;   // X_GetDeviceButtonMapping
+                                 length           : TCARD16;
+                                 deviceid         : TCARD8;
+                                 pad1, pad2, pad3 : TByte;
+                               end;
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_GetDeviceButtonMapping     */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    BYTE	pad1, pad2, pad3;
-} xGetDeviceButtonMappingReq;
+ PxGetDeviceButtonMappingReply = ^TxGetDeviceButtonMappingReply;
+ TxGetDeviceButtonMappingReply = bitpacked record
+                                    reqType          : TCARD8;   // X_Reply
+                                    ReqType2         : TCARD8;   // always X_GetDeviceButtonMapping
+                                    sequenceNumber   : TCARD16;
+                                    length           : TCARD32;
+                                    nElts            : TCARD8;
+                                    pad1, pad2, pad3 : TByte;
+                                    pad01            : TCARD32;
+                                    pad02            : TCARD32;
+                                    pad03            : TCARD32;
+                                    pad04            : TCARD32;
+                                    pad05            : TCARD32;
+                                 end;
 
-typedef struct {
-    CARD8  	repType;  	/* X_Reply */
-    CARD8  	RepType;        /* always X_GetDeviceButtonMapping */
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8 	nElts;
-    BYTE	pad1, pad2, pad3;
-    CARD32 	pad01 B32;
-    CARD32 	pad02 B32;
-    CARD32 	pad03 B32;
-    CARD32 	pad04 B32;
-    CARD32 	pad05 B32;
-} xGetDeviceButtonMappingReply;
-
-/*********************************************************
+(*********************************************************
  *
  * SetDeviceButtonMapping.
  *
- */
+ *)
+ PxSetDeviceButtonMappingReq = ^TxSetDeviceButtonMappingReq;
+ TxSetDeviceButtonMappingReq = bitpacked record
+                                 reqType          : TCARD8;   // input extension major code
+                                 ReqType2         : TCARD8;   // X_SetDeviceButtonMapping
+                                 length           : TCARD16;
+                                 deviceid         : TCARD8;
+                                 map_length       : TCARD8;
+                                 pad1, pad2, pad3 : TByte;
+                               end;
 
-typedef struct {
-    CARD8	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;        /* X_SetDeviceButtonMapping     */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    CARD8   	map_length;
-    BYTE	pad1, pad2;
-} xSetDeviceButtonMappingReq;
+ PxSetDeviceButtonMappingReply = ^TxSetDeviceButtonMappingReply;
+ TxSetDeviceButtonMappingReply = bitpacked record
+                                   reqType        : TCARD8;   // X_Reply
+                                   ReqType2       : TCARD8;   // always X_SetDeviceButtonMapping
+                                   sequenceNumber : TCARD16;
+                                   length         : TCARD32;
+                                   status         : TCARD8;
+                                   pad0           : TByte;
+                                   pad1           : TCARD16;
+                                   pad2           : TCARD32;
+                                   pad3           : TCARD32;
+                                   pad4           : TCARD32;
+                                   pad5           : TCARD32;
+                                   pad6           : TCARD32;
+                                 end;
 
-typedef struct {
-    CARD8  	repType;  		/* X_Reply */
-    CARD8  	RepType;        	/* always X_SetDeviceButtonMapping */
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8 	status;
-    BYTE 	pad0;
-    CARD16 	pad1 B16;
-    CARD32 	pad2 B32;
-    CARD32 	pad3 B32;
-    CARD32 	pad4 B32;
-    CARD32 	pad5 B32;
-    CARD32 	pad6 B32;
-} xSetDeviceButtonMappingReply;
-
-/*********************************************************
+(*********************************************************
  *
  * QueryDeviceState.
  *
- */
+ *)
+ PxQueryDeviceStateReq = ^TxQueryDeviceStateReq;
+ TxQueryDeviceStateReq = bitpacked record
+                           reqType          : TCARD8;
+                           ReqType2         : TCARD8;   // always X_QueryDeviceState
+                           length           : TCARD16;
+                           deviceid         : TCARD8;
+                           pad1, pad2, pad3 : TByte;
+                         end;
 
-typedef struct {
-    CARD8	reqType;
-    CARD8 	ReqType;        /* always X_QueryDeviceState */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    BYTE	pad1, pad2, pad3;
-} xQueryDeviceStateReq;
+ PxQueryDeviceStateReply = ^TxQueryDeviceStateReply;
+ TxQueryDeviceStateReply = bitpacked record
+                             reqType        : TCARD8;   // X_Reply
+                             ReqType2       : TCARD8;   // always X_QueryDeviceState
+                             sequenceNumber : TCARD16;
+                             length         : TCARD32;
+                             num_classes    : TCARD8;
+                             pad0           : TByte;
+                             pad1           : TCARD16;
+                             pad2           : TCARD32;
+                             pad3           : TCARD32;
+                             pad4           : TCARD32;
+                             pad5           : TCARD32;
+                             pad6           : TCARD32;
+                           end;
 
-typedef struct {
-    CARD8  	repType;  		/* X_Reply */
-    CARD8  	RepType;        	/* always X_QueryDeviceState	*/
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8 	num_classes;
-    BYTE 	pad0;
-    CARD16 	pad1 B16;
-    CARD32 	pad2 B32;
-    CARD32 	pad3 B32;
-    CARD32 	pad4 B32;
-    CARD32 	pad5 B32;
-    CARD32 	pad6 B32;
-} xQueryDeviceStateReply;
+ PxKeyState = ^TxKeyState;
+ TxKeyState = bitpacked record
+                c_class  : TCARD8;
+                length   : TCARD8;
+                num_keys : TCARD8;
+                pad1     : TByte;
+                keys     : array[0..31] of TCARD8;
+              end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;
-#else
-    CARD8  	class;
-#endif
-    CARD8  	length;
-    CARD8	num_keys;
-    BYTE   	pad1;
-    CARD8  	keys[32];
-} xKeyState;
+ PxButtonState = ^TxButtonState;
+ TxButtonState = bitpacked record
+                   c_class     : TCARD8;
+                   length      : TCARD8;
+                   num_buttons : TCARD8;
+                   pad1        : TByte;
+                   buttons     : array[0..31] of TCARD8;
+                 end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;
-#else
-    CARD8  	class;
-#endif
-    CARD8  	length;
-    CARD8	num_buttons;
-    BYTE   	pad1;
-    CARD8  	buttons[32];
-} xButtonState;
+ PxValuatorState = ^TxValuatorState;
+ TxValuatorState = record
+                     c_class       : TCARD8;
+                     length        : TCARD8;
+                     num_valuators : TCARD8;
+                     mode          : TCARD8;
+                   end;
 
-typedef struct {
-#if defined(__cplusplus) || defined(c_plusplus)
-    CARD8  	c_class;
-#else
-    CARD8  	class;
-#endif
-    CARD8  	length;
-    CARD8  	num_valuators;
-    CARD8	mode;
-} xValuatorState;
-
-/*********************************************************
+(*********************************************************
  *
  * SendExtensionEvent.
  * THIS REQUEST MUST BE KEPT A MULTIPLE OF 8 BYTES IN LENGTH!
  * MORE EVENTS MAY FOLLOW AND THEY MUST BE QUAD-ALIGNED!
  *
- */
+ *)
+ PxSendExtensionEventReq = ^TxSendExtensionEventReq;
+ TxSendExtensionEventReq = bitpacked record
+                             reqType          : TCARD8;
+                             ReqType2         : TCARD8;   // always X_SendExtensionEvent
+                             length           : TCARD16;
+                             destination      : TWindow;
+                             deviceid         : TCARD8;
+                             propagate        : TBool;
+                             count            : TCARD16;
+                             num_events       : TCARD8;
+                             pad1, pad2, pad3 : TByte;
+                           end;
 
-typedef struct {
-    CARD8	reqType;
-    CARD8 	ReqType;        /* always X_SendExtensionEvent */
-    CARD16 	length B16;
-    Window	destination B32;
-    CARD8   	deviceid;
-    BOOL   	propagate;
-    CARD16	count B16;
-    CARD8	num_events;
-    BYTE	pad1,pad2,pad3;
-} xSendExtensionEventReq;
-
-/*********************************************************
+(*********************************************************
  *
  * DeviceBell.
  *
- */
+ *)
+ PxDeviceBellReq = ^TxDeviceBellReq;
+ TxDeviceBellReq = bitpacked record
+                     reqType       : TCARD8;
+                     ReqType2      : TCARD8;   // always X_DeviceBell
+                     length        : TCARD16;
+                     deviceid      : TCARD8;
+                     feedbackid    : TCARD8;
+                     feedbackclass : TCARD8;
+                     percent       : TINT8;
+                   end;
 
-typedef struct {
-    CARD8	reqType;
-    CARD8 	ReqType;        /* always X_DeviceBell */
-    CARD16 	length B16;
-    CARD8   	deviceid;
-    CARD8	feedbackid;
-    CARD8	feedbackclass;
-    INT8	percent;
-} xDeviceBellReq;
-
-/*********************************************************
+(*********************************************************
  *
  * SetDeviceValuators.
  *
- */
+ *)
+ PxSetDeviceValuatorsReq = ^TxSetDeviceValuatorsReq;
+ TxSetDeviceValuatorsReq = bitpacked record
+                             reqType        : TCARD8;   // input extension major code
+                             ReqType2       : TCARD8;   // always X_SetDeviceValuators
+                             length         : TCARD16;
+                             deviceid       : TCARD8;
+                             first_valuator : TCARD8;
+                             num_valuators  : TCARD8;
+                             pad1           : TByte;
+                           end;
 
-typedef struct {
-    CARD8 	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;     	/* always X_SetDeviceValuators 	*/
-    CARD16 	length B16;
-    CARD8       deviceid;
-    CARD8       first_valuator;
-    CARD8       num_valuators;
-    BYTE 	pad1;
-} xSetDeviceValuatorsReq;
+ PxSetDeviceValuatorsReply = ^TxSetDeviceValuatorsReply;
+ TxSetDeviceValuatorsReply = bitpacked record
+                               reqType          : TCARD8;   // X_Reply
+                               ReqType2         : TCARD8;   // always X_SetDeviceValuators
+                               sequenceNumber   : TCARD16;
+                               length           : TCARD32;
+                               status           : TCARD8;
+                               pad1, pad2, pad3 : TByte;
+                               pad01            : TCARD32;
+                               pad02            : TCARD32;
+                               pad03            : TCARD32;
+                               pad04            : TCARD32;
+                               pad05            : TCARD32;
+                             end;
 
-typedef struct {
-    CARD8 	repType;  	/* X_Reply 			*/
-    CARD8 	RepType;     	/* always X_SetDeviceValuators 	*/
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8 	status;
-    BYTE	pad1, pad2, pad3;
-    CARD32 	pad01 B32;
-    CARD32 	pad02 B32;
-    CARD32 	pad03 B32;
-    CARD32 	pad04 B32;
-    CARD32 	pad05 B32;
-} xSetDeviceValuatorsReply;
-
-/*********************************************************
+(*********************************************************
  *
  * GetDeviceControl.
  *
- */
+ *)
+ PxGetDeviceControlReq = ^TxGetDeviceControlReq;
+ TxGetDeviceControlReq = bitpacked record
+                           reqType   : TCARD8;   // input extension major code
+                           ReqType2  : TCARD8;   // always X_GetDeviceControl
+                           length    : TCARD16;
+                           control   : TCARD16;
+                           deviceid  : TCARD8;
+                           pad2      : TByte;
+                         end;
 
-typedef struct {
-    CARD8 	reqType;	/* input extension major code	*/
-    CARD8 	ReqType;     	/* always X_GetDeviceControl 	*/
-    CARD16 	length B16;
-    CARD16      control B16;
-    CARD8       deviceid;
-    BYTE 	pad2;
-} xGetDeviceControlReq;
+ PxGetDeviceControlReply = ^TxGetDeviceControlReply;
+ TxGetDeviceControlReply = bitpacked record
+                             reqType          : TCARD8;   // X_Reply
+                             ReqType2         : TCARD8;   // always X_GetDeviceControl
+                             sequenceNumber   : TCARD16;
+                             length           : TCARD32;
+                             status           : TCARD8;
+                             pad1, pad2, pad3 : TByte;
+                             pad01            : TCARD32;
+                             pad02            : TCARD32;
+                             pad03            : TCARD32;
+                             pad04            : TCARD32;
+                             pad05            : TCARD32;
+                           end;
 
-typedef struct {
-    CARD8 	repType;  	/* X_Reply 			*/
-    CARD8 	RepType;     	/* always X_GetDeviceControl 	*/
-    CARD16 	sequenceNumber B16;
-    CARD32 	length B32;
-    CARD8 	status;
-    BYTE	pad1, pad2, pad3;
-    CARD32 	pad01 B32;
-    CARD32 	pad02 B32;
-    CARD32 	pad03 B32;
-    CARD32 	pad04 B32;
-    CARD32 	pad05 B32;
-} xGetDeviceControlReply;
+ PxDeviceState = ^TxDeviceState;
+ TxDeviceState = bitpacked record
+                   control : TCARD16; // control type
+                   length  : TCARD16; // control length
+                 end;
 
-typedef struct {
-    CARD16  	control B16; 	/* control type     	 	*/
-    CARD16  	length B16; 	/* control length  		*/
-} xDeviceState;
+ PxDeviceResolutionState = ^TxDeviceResolutionState;
+ TxDeviceResolutionState = bitpacked record
+                             control       : TCARD16; // control type
+                             length        : TCARD16; // control length
+                             num_valuators : TCARD32; // number of valuators
+                           end;
 
-typedef struct {
-    CARD16  	control B16; 		/* control type     	 	*/
-    CARD16  	length B16; 		/* control length  		*/
-    CARD32  	num_valuators B32; 	/* number of valuators		*/
-} xDeviceResolutionState;
+ PxDeviceAbsCalibState = ^TxDeviceAbsCalibState;
+ TxDeviceAbsCalibState = bitpacked record
+                           control          : TCARD16;
+                           length           : TCARD16;
+                           min_x            : TINT32;
+                           max_x            : TINT32;
+                           min_y            : TINT32;
+                           max_y            : TINT32;
+                           flip_x           : TCARD32;
+                           flip_y           : TCARD32;
+                           rotation         : TCARD32;
+                           button_threshold : TCARD32;
+                         end;
 
-typedef struct {
-     CARD16         control B16;
-     CARD16         length B16;
-     INT32          min_x B32;
-     INT32          max_x B32;
-     INT32          min_y B32;
-     INT32          max_y B32;
-     CARD32         flip_x B32;
-     CARD32         flip_y B32;
-     CARD32         rotation B32;
-     CARD32         button_threshold B32;
-} xDeviceAbsCalibState;
+ PxDeviceAbsAreaState = ^TxDeviceAbsAreaState;
+ TxDeviceAbsAreaState = bitpacked record
+                          control   : TCARD16;
+                          length    : TCARD16;
+                          offset_x  : TCARD32;
+                          offset_y  : TCARD32;
+                          width     : TCARD32;
+                          height    : TCARD32;
+                          screen    : TCARD32;
+                          following : TCARD32;
+                        end;
 
-typedef struct {
-     CARD16         control B16;
-     CARD16         length B16;
-     CARD32         offset_x B32;
-     CARD32         offset_y B32;
-     CARD32         width B32;
-     CARD32         height B32;
-     CARD32         screen B32;
-     CARD32         following B32;
-} xDeviceAbsAreaState;
+ PxDeviceCoreState = ^TxDeviceCoreState;
+ TxDeviceCoreState = bitpacked record
+                       control : TCARD16; // control type
+                       length  : TCARD16; // control length
+                       status  : TCARD8;
+                       iscore  : TCARD8;
+                       pad1    : TCARD8;
+                     end;
 
-typedef struct {
-    CARD16      control B16;            /* control type                 */
-    CARD16      length  B16;            /* control length               */
-    CARD8       status;
-    CARD8       iscore;
-    CARD16      pad1 B16;
-} xDeviceCoreState;
+ PxDeviceEnableState = ^TxDeviceEnableState;
+ TxDeviceEnableState = bitpacked record
+                         control : TCARD16; // control type
+                         length  : TCARD16; // control length
+                         enable  : TCARD8;
+                         pad0    : TCARD8;
+                         pad1    : TCARD16;
+                       end;
 
-typedef struct {
-    CARD16      control B16;            /* control type                 */
-    CARD16      length  B16;            /* control length               */
-    CARD8       enable;
-    CARD8       pad0;
-    CARD16      pad1 B16;
-} xDeviceEnableState;
-
+(*
 /*********************************************************
  *
  * ChangeDeviceControl.
