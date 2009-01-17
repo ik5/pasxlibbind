@@ -38,7 +38,9 @@ uses
   ;
 
 const
-  libXCBRenderUtils = 'xcb-render-util';
+  libXCB            = 'libxcb';
+  libXCBEvent       = 'libxcb-event';
+  libXCBRenderUtils = 'libxcb-render-util';
 
 (**
  * @defgroup XCB_Core_API XCB Core API
@@ -157,34 +159,34 @@ const
 
 
 (* xcb_auth.c *)
-
+type
+ Pxcb_auth_info_t = ^Txcb_auth_info_t;
 (**
  * @brief Container for authorization information.
  *
  * A container for authorization information to be sent to the X server.
  *)
- (*
-typedef struct xcb_auth_info_t {
-    int   namelen;  /**< Length of the string name (as returned by strlen). */
-    char *name;     /**< String containing the authentication protocol name, such as "MIT-MAGIC-COOKIE-1" or "XDM-AUTHORIZATION-1". */
-    int   datalen;  /**< Length of the data member. */
-    char *data;   /**< Data interpreted in a protocol-specific manner. */
-} xcb_auth_info_t;
+ Txcb_auth_info_t = record
+                      namelen : cint;  (**< Length of the string name (as returned by strlen). *)
+                      name    : PChar; (**< String containing the authentication protocol name, such as "MIT-MAGIC-COOKIE-1" or "XDM-AUTHORIZATION-1". *)
+                      datalen : cint;  (**< Length of the data member. *)
+                      data    : PChar; (**< Data interpreted in a protocol-specific manner. *)
+                    end;
 
+(* xcb_out.c *)
 
-/* xcb_out.c */
-
-/**
+(**
  * @brief Forces any buffered output to be written to the server.
  * @param c: The connection to the X server.
  * @return > @c 0 on success, <= @c 0 otherwise.
  *
  * Forces any buffered output to be written to the server. Blocks
  * until the write is complete.
- */
-int xcb_flush(xcb_connection_t *c);
+ *)
+function xcb_flush(c : Pxcb_connection_t) : cint;
+  external libXCBRenderUtils;
 
-/**
+(**
  * @brief Returns the maximum request length that this server accepts.
  * @param c: The connection to the X server.
  * @return The maximum request length field.
@@ -198,10 +200,11 @@ int xcb_flush(xcb_connection_t *c);
  * Note that this length is measured in four-byte units, making the
  * theoretical maximum lengths roughly 256kB without BIG-REQUESTS and
  * 16GB with.
- */
-uint32_t xcb_get_maximum_request_length(xcb_connection_t *c);
+ *)
+function xcb_get_maximum_request_length(c : Pxcb_connection_t) : cuint32;
+  external libXCB;
 
-/**
+(**
  * @brief Prefetch the maximum request length without blocking.
  * @param c: The connection to the X server.
  *
@@ -217,13 +220,13 @@ uint32_t xcb_get_maximum_request_length(xcb_connection_t *c);
  * application must previously have called
  * xcb_prefetch_extension_data(c, &xcb_big_requests_id) and the reply
  * must have already arrived.
- */
-void xcb_prefetch_maximum_request_length(xcb_connection_t *c);
+ *)
+procedure xcb_prefetch_maximum_request_length(c : Pxcb_connection_t);
+  external libXCB;
 
+(* xcb_in.c *)
 
-/* xcb_in.c */
-
-/**
+(**
  * @brief Returns the next event or error from the server.
  * @param c: The connection to the X server.
  * @return The next event from the server.
@@ -231,10 +234,11 @@ void xcb_prefetch_maximum_request_length(xcb_connection_t *c);
  * Returns the next event or error from the server, or returns null in
  * the event of an I/O error. Blocks until either an event or error
  * arrive, or an I/O error occurs.
- */
-xcb_generic_event_t *xcb_wait_for_event(xcb_connection_t *c);
+ *)
+function xcb_wait_for_event(c : Pxcb_connection_t) : Pxcb_generic_event_t;
+  external libXCBEvent;
 
-/**
+(**
  * @brief Returns the next event or error from the server.
  * @param c: The connection to the X server.
  * error status of the operation.
@@ -245,10 +249,11 @@ xcb_generic_event_t *xcb_wait_for_event(xcb_connection_t *c);
  * might be because an I/O error like connection close occurred while
  * attempting to read the next event, in which case the connection is
  * shut down when this function returns.
- */
-xcb_generic_event_t *xcb_poll_for_event(xcb_connection_t *c);
+ *)
+function xcb_poll_for_event(c : Pxcb_connection_t) : Pxcb_generic_event_t;
+  external libXCBEvent;
 
-/**
+(**
  * @brief Return the error for a request, or NULL if none can ever arrive.
  * @param c: The connection to the X server.
  * @param cookie: The request cookie.
@@ -263,18 +268,22 @@ xcb_generic_event_t *xcb_poll_for_event(xcb_connection_t *c);
  * Note that this function will perform a sync if needed to ensure that the
  * sequence number will advance beyond that provided in cookie; this is a
  * convenience to avoid races in determining whether the sync is needed.
- */
-xcb_generic_error_t *xcb_request_check(xcb_connection_t *c, xcb_void_cookie_t cookie);
+ *)
+function xcb_request_check(c : Pxcb_connection_t; cookie : Pxcb_void_cookie_t) : Pxcb_generic_error_t;
+  external libXCBRenderUtils;
 
+(* xcb_ext.c *)
 
-/* xcb_ext.c */
-
-/**
+(**
  * @typedef typedef struct xcb_extension_t xcb_extension_t
- */
-typedef struct xcb_extension_t xcb_extension_t;  /**< Opaque structure used as key for xcb_get_extension_data_t. */
+ *)
+type
+ Pxcb_extension_t = ^Txcb_extension_t;
+ (**< Opaque structure used as key for xcb_get_extension_data_t. *)
+ Txcb_extension_t = record
+                    end;
 
-/**
+(**
  * @brief Caches reply information from QueryExtension requests.
  * @param c: The connection.
  * @param ext: The extension data.
@@ -289,10 +298,14 @@ typedef struct xcb_extension_t xcb_extension_t;  /**< Opaque structure used as k
  *
  * The result must not be freed. This storage is managed by the cache
  * itself.
- */
-const xcb_query_extension_reply_t *xcb_get_extension_data(xcb_connection_t *c, xcb_extension_t *ext);
+ *)
+{ ****** Require xproto (the xcb version) for having the Pxcb_query_extension_reply_t decleraction *******
 
-/**
+function xcb_get_extension_data(c : Pxcb_connection_t; ext : Pxcb_extension_t) : Pxcb_query_extension_reply_t;
+  external libXCB;
+}
+
+(**
  * @brief Prefetch of extension data into the extension cache
  * @param c: The connection.
  * @param ext: The extension data.
@@ -302,7 +315,7 @@ const xcb_query_extension_reply_t *xcb_get_extension_data(xcb_connection_t *c, x
  * xcb_query_extension, but will not block waiting for the
  * reply. xcb_get_extension_data will return the prefetched data after
  * possibly blocking while it is retrieved.
- */
+ *)
 void xcb_prefetch_extension_data(xcb_connection_t *c, xcb_extension_t *ext);
 
 
