@@ -316,12 +316,13 @@ function xcb_get_extension_data(c : Pxcb_connection_t; ext : Pxcb_extension_t) :
  * reply. xcb_get_extension_data will return the prefetched data after
  * possibly blocking while it is retrieved.
  *)
-void xcb_prefetch_extension_data(xcb_connection_t *c, xcb_extension_t *ext);
 
+procedure xcb_prefetch_extension_data(c : Pxcb_connection_t; ext : Pxcb_extension_t);
+   external libXCB;
 
-/* xcb_conn.c */
+(* xcb_conn.c *)
 
-/**
+(**
  * @brief Access the data returned by the server.
  * @param c: The connection.
  * @return A pointer to an xcb_setup_t structure.
@@ -338,7 +339,8 @@ void xcb_prefetch_extension_data(xcb_connection_t *c, xcb_extension_t *ext);
  * See the X protocol specification for more details.
  *
  * The result must not be freed.
- */
+ *)
+
 const xcb_setup_t *xcb_get_setup(xcb_connection_t *c);
 
 /**

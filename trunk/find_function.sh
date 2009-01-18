@@ -50,7 +50,7 @@ if [ -z "$path" ] || [ -z "$string" ]; then
 fi
 
 for file in $path; do
-  command=`objdump -R -r -t $file  | grep "$string"`
+  command=`objdump -C -p -x -R -r -t $file  | grep "$string"`
   if [ "$command" ]; then
     echo "found the string \"$string\" in $file"
     exit 1
