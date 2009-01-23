@@ -33,6 +33,20 @@
 # for a specific function
 #
 
+# NOTE:
+# Remarks regarding the following tools that the script is using:
+#
+# - nm will work only if there are symbols exported in the shared library. That 
+#   is 'strip' did not run on that library. If nm works, the actual function of 
+#   the library is always located under the T symbol that nm display.
+#
+# - If the library does not have symbols, objdump can work. In order to find 
+#   the proper exported function, we need to use the -T command line option, 
+#   and find what we are looking for under the ".text" section. If we find it 
+#   in any other section it means that the function is not exported by this 
+#   library.
+#
+
 path=           # the path to look at
 string=         # the string to look for
 cmd=            # the command to be use (objdump, strings etc..)
