@@ -40,26 +40,28 @@ sensitive=""    # case sensitive flag
 verbose=0       # to see more information about what we are doing.
 regex="-F"        # indicates if the string is regular expression or not
 
-if [ $# -lt "4" ];  # Script invoked with not enough command-line arguments ?
-then
-  echo "Usage: `basename $0` -p <path> -s <string> [ [-t|-o] -i -v -r]"
+if [ $# -lt "4" ]; then  # Script invoked with not enough command-line arguments ?
+  echo    "Usage: `basename $0` -p <path> -s <string> [ [-t|-o] -i -v -r]"
   echo    "    -i - Use case insensitive (upper and lower case are the same) default is case sensitive"
-  echo    "    -o - Use the 'objdump' command instead of 'strings' (default)"
+  echo    "    -n - Use the 'nm' command instead of 'objdump' or 'strings'"
+  echo    "    -o - Use the 'objdump' command instead of 'strings' or 'nm' (default)"
   echo -e "    -p - The path to work with (\E[1mrequired\E[m)"
   echo    "    -r - Tells us that the string that was given using -s is POSIX regular expression"
   echo -e "    -s - The string to find (\E[1mrequired\E[m)"
   echo    "    -t - Use the 'strings' command instead of 'objdump' command"
   echo    "    -v - Verbose - to see more information about "
   echo
-  echo "Example:"
-  echo "    `basename $0` -p /usr/lib/lib\\*.so -s \"Hello World\""
+  echo    "Example:"
+  echo    "    `basename $0` -p /usr/lib/lib\\*.so -s \"\.text\s+[0-9a-zA-Z]+.*test\" -r"
+  echo    "    `basename $0` -p /usr/lib/lib\\*.so -s \"^[0-9a-zA-Z]+ T test\" -n -r"
   exit 65        # Exit and explain usage, if no argument(s) given.
 fi
 
-while getopts "p:s:toivr" Option; do
+while getopts "p:s:toivrn" Option; do
   case $Option in
     i ) sensitive="-i";;
-    o ) cmd="objdump -C -p -x -R -r -t ";;
+    n ) cmd="nm ";;
+    o ) cmd="objdump -T";; #cmd="objdump -C -p -x -R -r -t ";;
     p ) path="$OPTARG";;
     r ) regex="--extended-regexp -e";;
     s ) string="$OPTARG";;
@@ -82,7 +84,7 @@ if [ -z "$path" ] || [ -z "$string" ]; then # if we do not have a path or string
 fi
 
 if [ -z "$cmd" ]; then # No command was given ?
-  cmd="objdump -C -p -x -R -r -t "
+  cmd="objdump -T"
   if [ $verbose -eq 1 ]; then
     echo "Set default command to \"$cmd\""
   fi
