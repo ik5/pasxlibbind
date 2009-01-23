@@ -3,58 +3,118 @@
 # Copyright (c) 2009, Ido Kanner <idokan at@at gmail dot.dot com>
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without 
+# modification, are permitted provided that the following conditions 
+# are met:
 #
-# * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-# * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the 
+# * Redistributions of source code must retain the above copyright 
+#   notice, this list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice, 
+#   this list of conditions and the following disclaimer in the 
 #   documentation and/or other materials provided with the distribution.
-# * Neither the names of contributors may be used to endorse or promote products derived from this software 
-#   without specific prior written permission.
+# * Neither the names of contributors may be used to endorse or promote 
+#   products derived from this software without specific prior written 
+#   permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-# IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
-# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+# ARE DISCLAIMED. 
+# IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY 
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# The following script run on a given directory and parse the files to search for a specific function
+# The following script run on a given directory and parse the files to search 
+# for a specific function
 #
+#######################################################################
+# TODO: Add four additional flags:
+#   1. Search a string using the POSIX grep regex support
+#######################################################################
 
-path=
-string=
 
-if [ $# -ne "4" ];  # Script invoked with no command-line args?
+path=           # the path to look at
+string=         # the string to look for
+cmd=            # the command to be use (objdump, strings etc..)
+sensitive=""    # case sensitive flag
+verbose=0       # to see more information about what we are doing.
+
+if [ $# -lt "4" ];  # Script invoked with not enough command-line arguments ?
 then
-  echo "Usage: `basename $0` options (-ps)"
-  echo "    -p - The path to work with"
-  echo "    -s - The string to find"
+  echo "Usage: `basename $0` -p <path> -s <string> [-toi]"
+  echo "    -p - The path to work with (required)"
+  echo "    -s - The string to find (required)"
+  echo "    -t - use the 'strings' command instead of 'objdump' command"
+  echo "    -o - use the 'objdump' command instead of 'strings' (default)"
+  echo "    -i - use case insensitive (upper and lower case are the same) default is case sensitive"
+  echo "    -v - verbose - to see more information about "
   echo
   echo "Example:"
   echo "    `basename $0` -p /usr/lib/lib\\*.so -s \"Hello World\""
   exit 65        # Exit and explain usage, if no argument(s) given.
 fi
 
-while getopts "p:s:" Option; do
+while getopts "p:s:toiv" Option; do
   case $Option in
     p ) path="$OPTARG";;
     s ) string="$OPTARG";;
+    t ) cmd="strings ";;
+    o ) cmd="objdump -C -p -x -R -r -t ";;
+    i ) sensitive="-i";;
+    v ) verbose=1;;
     * ) echo "Unknown Option was given ($OPTARG)."
         exit 65 ;;
   esac
 done
 
-if [ -z "$path" ] || [ -z "$string" ]; then
+if [ -z "$path" ] || [ -z "$string" ]; then # if we do not have a path or string, then the required arguments did you passed.
   echo "One or more parameter value is/are missing."
   exit 65
 fi
 
+if [ -z "$cmd" ]; then # No command was given ?
+  cmd="objdump -C -p -x -R -r -t "
+  if [ $verbose -eq 1 ]; then
+    echo "Set default command to \"$cmd\""
+  fi
+fi
+
+found=0
 for file in $path; do
-  command=`objdump -C -p -x -R -r -t $file  | grep "$string"`
-  if [ "$command" ]; then
-    echo "found the string \"$string\" in $file"
-    exit 1
+  command=`$cmd "$file" | grep $sensitive "$string"`
+  if [ $verbose -eq 1 ]; then
+    echo -n "$file ($string): "
+  fi
+  if [ $command ]; then
+    if [ $verbose -eq 1 ]; then
+      echo -n " ["
+      echo -ne "\E[0;34m" # blue foreground
+      echo -ne "\E[4m"    # underline
+      echo -ne "\E[1m"    # bold
+      echo -n "V"
+      echo -ne "\E[m"     # reset colors to default
+      echo "] "
+    else
+      echo "\"$string\" found in \"$file\""
+      #exit 1
+    fi
+   found=1
+  else
+    if [ $verbose -eq 1 ]; then
+      echo -n " ["
+      echo -en "\E[0;31m" # red foreground
+      echo -n "X"
+      echo -en "\E[m"     # reset colors to default
+      echo "] "
+    fi
   fi
 done;
 
-echo "Could not find the string \"$string\"."
+if [ $found -eq 0 ]; then
+  echo "Could not find the string \"$string\"."
+fi
