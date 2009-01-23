@@ -32,40 +32,38 @@
 # The following script run on a given directory and parse the files to search 
 # for a specific function
 #
-#######################################################################
-# TODO: Add four additional flags:
-#   1. Search a string using the POSIX grep regex support
-#######################################################################
-
 
 path=           # the path to look at
 string=         # the string to look for
 cmd=            # the command to be use (objdump, strings etc..)
 sensitive=""    # case sensitive flag
 verbose=0       # to see more information about what we are doing.
+regex="-F"        # indicates if the string is regular expression or not
 
 if [ $# -lt "4" ];  # Script invoked with not enough command-line arguments ?
 then
-  echo "Usage: `basename $0` -p <path> -s <string> [-toi]"
-  echo "    -p - The path to work with (required)"
-  echo "    -s - The string to find (required)"
-  echo "    -t - use the 'strings' command instead of 'objdump' command"
-  echo "    -o - use the 'objdump' command instead of 'strings' (default)"
-  echo "    -i - use case insensitive (upper and lower case are the same) default is case sensitive"
-  echo "    -v - verbose - to see more information about "
+  echo "Usage: `basename $0` -p <path> -s <string> [ [-t|-o] -i -v -r]"
+  echo    "    -i - Use case insensitive (upper and lower case are the same) default is case sensitive"
+  echo    "    -o - Use the 'objdump' command instead of 'strings' (default)"
+  echo -e "    -p - The path to work with (\E[1mrequired\E[m)"
+  echo    "    -r - Tells us that the string that was given using -s is POSIX regular expression"
+  echo -e "    -s - The string to find (\E[1mrequired\E[m)"
+  echo    "    -t - Use the 'strings' command instead of 'objdump' command"
+  echo    "    -v - Verbose - to see more information about "
   echo
   echo "Example:"
   echo "    `basename $0` -p /usr/lib/lib\\*.so -s \"Hello World\""
   exit 65        # Exit and explain usage, if no argument(s) given.
 fi
 
-while getopts "p:s:toiv" Option; do
+while getopts "p:s:toivr" Option; do
   case $Option in
+    i ) sensitive="-i";;
+    o ) cmd="objdump -C -p -x -R -r -t ";;
     p ) path="$OPTARG";;
+    r ) regex="--extended-regexp -e";;
     s ) string="$OPTARG";;
     t ) cmd="strings ";;
-    o ) cmd="objdump -C -p -x -R -r -t ";;
-    i ) sensitive="-i";;
     v ) verbose=1;;
     * ) echo "Unknown Option was given ($OPTARG)."
         exit 65 ;;
@@ -73,7 +71,13 @@ while getopts "p:s:toiv" Option; do
 done
 
 if [ -z "$path" ] || [ -z "$string" ]; then # if we do not have a path or string, then the required arguments did you passed.
-  echo "One or more parameter value is/are missing."
+  if [ -z "$path" ]; then
+    echo "The path value is missing. The information of the path is mandatory, please provide it."
+  fi
+
+  if [ -z "$string" ]; then
+    echo "The string value is missing. The information of the string is mandatory, please provide it."
+  fi
   exit 65
 fi
 
@@ -86,7 +90,7 @@ fi
 
 found=0
 for file in $path; do
-  command=`$cmd "$file" | grep $sensitive "$string"`
+  command=`$cmd "$file" | grep $sensitive $regex "$string"`
   if [ $verbose -eq 1 ]; then
     echo -n "$file ($string): "
   fi
