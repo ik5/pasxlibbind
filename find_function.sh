@@ -94,7 +94,7 @@ for file in $path; do
   if [ $verbose -eq 1 ]; then
     echo -n "$file ($string): "
   fi
-  if [ $command ]; then
+  if [ -n "$command" ]; then
     if [ $verbose -eq 1 ]; then
       echo -n " ["
       echo -ne "\E[0;34m" # blue foreground
