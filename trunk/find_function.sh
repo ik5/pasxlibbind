@@ -47,15 +47,19 @@
 #   library.
 #
 
+version="$Id$"  # svn id
 path=           # the path to look at
 string=         # the string to look for
 cmd=            # the command to be use (objdump, strings etc..)
 sensitive=""    # case sensitive flag
 verbose=0       # to see more information about what we are doing.
-regex="-F"        # indicates if the string is regular expression or not
+regex="-F"      # indicates if the string is regular expression or not
+
+echo "`basename $0` - Copyright (c) 2009 by Ido Kanner All rights reserved under BSD license"
+echo "Version: $version"
 
 if [ $# -lt "4" ]; then  # Script invoked with not enough command-line arguments ?
-  echo    "Usage: `basename $0` -p <path> -s <string> [ [-t|-o] -i -v -r]"
+  echo    "Usage: `basename $0` -p <path> -s <string> [ [-t|-o|n] -i -v -r]"
   echo    "    -i - Use case insensitive (upper and lower case are the same) default is case sensitive"
   echo    "    -n - Use the 'nm' command instead of 'objdump' or 'strings'"
   echo    "    -o - Use the 'objdump' command instead of 'strings' or 'nm' (default)"
