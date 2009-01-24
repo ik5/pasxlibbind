@@ -31,10 +31,8 @@ unit xcb;
 interface
 
 uses
-  ctypes{,
-  (* Include the generated xproto header. *)
-  xcdxproto
-  }
+  ctypes,
+  xcb_types // Instead oc circular usageo f xcbproto
   ;
 
 const
@@ -49,129 +47,7 @@ const
  * @{
  *)
 
-(* Pre-defined constants *)
-
-(** Current protocol version *)
-  X_PROTOCOL          = 11;
-
-(** Current minor version *)
-  X_PROTOCOL_REVISION = 0;
-
-(** X_TCP_PORT + display number = server port for TCP transport *)
-  X_TCP_PORT          = 6000;
-
 function XCB_TYPE_PAD(const T, I : clong) : clong;
-
-(* Opaque structures *)
-
-(**
- * @brief XCB Connection structure.
- *
- * A structure that contain all data that  XCB needs to communicate with an X server.
- *)
-
-type
-  Pxcb_connection_t = ^Txcb_connection_t;
-  // Opaque structure containing all data that  XCB needs to communicate with an X server.
-  Txcb_connection_t = record
-                      end;
-
-(* Other types *)
-
- Pxcb_generic_iterator_t = ^Txcb_generic_iterator_t;
-(**
- * @brief Generic iterator.
- *
- * A generic iterator structure.
- *)
- Txcb_generic_iterator_t = record
-                             data  : Pointer;   (**< Data of the current iterator *)
-                             rem   : cint;      (**< remaining elements *)
-                             index : cint;      (**< index of the current iterator *)
-                           end;
-
- Pxcb_generic_reply_t = ^Txcb_generic_reply_t;
-(**
- * @brief Generic reply.
- *
- * A generic reply structure.
- *)
- Txcb_generic_reply_t = record
-                          response_type : cuint8;  (**< Type of the response *)
-                          pad0          : cuint8;  (**< Padding *)
-                          sequence      : cuint16; (**< Sequence number *)
-                          length        : cuint32; (**< Length of the response *)
-                        end;
-
- Pxcb_generic_event_t = ^Txcb_generic_event_t;
-(**
- * @brief Generic event.
- *
- * A generic event structure.
- *)
- Txcb_generic_event_t = record
-                          response_type : cuint8;                 (**< Type of the response *)
-                          pad0          : cuint8;                 (**< Padding *)
-                          sequence      : cuint16;                (**< Sequence number *)
-                          pad           : array[0..6] of cuint32; (**< Padding *)
-                          full_sequence : cuint32;                (**< full sequence *)
-                        end;
-
- Pxcb_generic_error_t = ^Txcb_generic_error_t;
-(**
- * @brief Generic error.
- *
- * A generic error structure.
- *)
- Txcb_generic_error_t = record
-                          response_type : cuint8;                 (**< Type of the response *)
-                          error_code    : cuint8;                 (**< Error code *)
-                          sequence      : cuint16;                (**< Sequence number *)
-                          pad           : array[0..6] of cuint32; (**< Padding *)
-                          full_sequence : cuint32;                (**< full sequence *)
-                        end;
-
- Pxcb_void_cookie_t = ^Txcb_void_cookie_t;
-(**
- * @brief Generic cookie.
- *
- * A generic cookie structure.
- *)
- Txcb_void_cookie_t = record
-                        sequence : cuint; (**< Sequence number *)
-                      end;
-
-
-// #include "xproto.h"
-
-const
-(** XCB_NONE is the universal null resource or null atom parameter value for many core X requests *)
-  XCB_NONE             = clong(0);
-
-(** XCB_COPY_FROM_PARENT can be used for many xcb_create_window parameters *)
-  XCB_COPY_FROM_PARENT = clong(0);
-
-(** XCB_CURRENT_TIME can be used in most requests that take an xcb_timestamp_t *)
-  XCB_CURRENT_TIME     = clong(0);
-
-(** XCB_NO_SYMBOL fills in unused entries in xcb_keysym_t tables *)
-  XCB_NO_SYMBOL        = clong(0);
-
-
-(* xcb_auth.c *)
-type
- Pxcb_auth_info_t = ^Txcb_auth_info_t;
-(**
- * @brief Container for authorization information.
- *
- * A container for authorization information to be sent to the X server.
- *)
- Txcb_auth_info_t = record
-                      namelen : cint;  (**< Length of the string name (as returned by strlen). *)
-                      name    : PChar; (**< String containing the authentication protocol name, such as "MIT-MAGIC-COOKIE-1" or "XDM-AUTHORIZATION-1". *)
-                      datalen : cint;  (**< Length of the data member. *)
-                      data    : PChar; (**< Data interpreted in a protocol-specific manner. *)
-                    end;
 
 (* xcb_out.c *)
 
@@ -275,15 +151,6 @@ function xcb_request_check(c : Pxcb_connection_t; cookie : Pxcb_void_cookie_t) :
 (* xcb_ext.c *)
 
 (**
- * @typedef typedef struct xcb_extension_t xcb_extension_t
- *)
-type
- Pxcb_extension_t = ^Txcb_extension_t;
- (**< Opaque structure used as key for xcb_get_extension_data_t. *)
- Txcb_extension_t = record
-                    end;
-
-(**
  * @brief Caches reply information from QueryExtension requests.
  * @param c: The connection.
  * @param ext: The extension data.
@@ -299,11 +166,8 @@ type
  * The result must not be freed. This storage is managed by the cache
  * itself.
  *)
-{ ****** Require xproto (the xcb version) for having the Pxcb_query_extension_reply_t decleraction *******
-
 function xcb_get_extension_data(c : Pxcb_connection_t; ext : Pxcb_extension_t) : Pxcb_query_extension_reply_t;
   external libXCB;
-}
 
 (**
  * @brief Prefetch of extension data into the extension cache
@@ -340,20 +204,21 @@ procedure xcb_prefetch_extension_data(c : Pxcb_connection_t; ext : Pxcb_extensio
  *
  * The result must not be freed.
  *)
+function xcb_get_setup(c : Pxcb_connection_t) : Pxcb_setup_t;
+  external libXCB;
 
-const xcb_setup_t *xcb_get_setup(xcb_connection_t *c);
-
-/**
+(**
  * @brief Access the file descriptor of the connection.
  * @param c: The connection.
  * @return The file descriptor.
  *
  * Accessor for the file descriptor that was passed to the
  * xcb_connect_to_fd call that returned @p c.
- */
-int xcb_get_file_descriptor(xcb_connection_t *c);
+ *)
+function xcb_get_file_descriptor(c : Pxcb_connection_t) : cint;
+  external libXCB;
 
-/**
+(**
  * @brief Test whether the connection has shut down due to a fatal error.
  * @param c: The connection.
  * @return 1 if the connection is in an error state; 0 otherwise.
@@ -365,10 +230,11 @@ int xcb_get_file_descriptor(xcb_connection_t *c);
  *
  * @todo Other functions should document the conditions in
  * which they shut down the connection.
- */
-int xcb_connection_has_error(xcb_connection_t *c);
+ *)
+function xcb_connection_has_error(c : Pxcb_connection_t) : cint;
+  external libXCB;
 
-/**
+(**
  * @brief Connects to the X server.
  * @param fd: The file descriptor.
  * @param auth_info: Authentication data.
@@ -379,22 +245,23 @@ int xcb_connection_has_error(xcb_connection_t *c);
  * bidirectionally connected to an X server. If the connection
  * should be unauthenticated, @p auth_info must be @c
  * NULL.
- */
-xcb_connection_t *xcb_connect_to_fd(int fd, xcb_auth_info_t *auth_info);
+ *)
+function xcb_connect_to_fd(fd : cint; auth_info : pxcb_auth_info_t) : pxcb_connection_t;
+  external libXCB;
 
-/**
+(**
  * @brief Closes the connection.
  * @param c: The connection.
  *
  * Closes the file descriptor and frees all memory associated with the
  * connection @c c.
- */
-void xcb_disconnect(xcb_connection_t *c);
+ *)
+procedure xcb_disconnect(c : Pxcb_connection_t);
+  external libXCB;
 
+(* xcb_util.c *)
 
-/* xcb_util.c */
-
-/**
+(**
  * @brief Parses a display string name in the form documented by X(7x).
  * @param name: The name of the display.
  * @param host: A pointer to a malloc'd copy of the hostname.
@@ -410,10 +277,11 @@ void xcb_disconnect(xcb_connection_t *c);
  * number and @p screenp to the preferred screen number. @p screenp
  * can be @c NULL. If @p displayname does not contain a screen number,
  * it is set to @c 0.
- */
-int xcb_parse_display(const char *name, char **host, int *display, int *screen);
+ *)
+function xcb_parse_display(name : PChar; host : PPChar; display : pcint; screen : pcint) : cint;
+  external libXCB;
 
-/**
+(**
  * @brief Connects to the X server.
  * @param displayname: The name of the display.
  * @param screenp: A pointer to a preferred screen number.
@@ -424,10 +292,11 @@ int xcb_parse_display(const char *name, char **host, int *display, int *screen);
  * variable. If a particular screen on that server is preferred, the
  * int pointed to by @p screenp (if not @c NULL) will be set to that
  * screen; otherwise the screen will be set to 0.
- */
-xcb_connection_t *xcb_connect(const char *displayname, int *screenp);
+ *)
+function xcb_connect(displayname : PChar; screenp : pcint) : Pxcb_connection_t;
+  external libXCB;
 
-/**
+(**
  * @brief Connects to the X server, using an authorization information.
  * @param display: The name of the display.
  * @param auth: The authorization information.
@@ -438,34 +307,23 @@ xcb_connection_t *xcb_connect(const char *displayname, int *screenp);
  * authorization @p auth. If a particular screen on that server is
  * preferred, the int pointed to by @p screenp (if not @c NULL) will
  * be set to that screen; otherwise @p screenp will be set to 0.
- */
-xcb_connection_t *xcb_connect_to_display_with_auth_info(const char *display, xcb_auth_info_t *auth, int *screen);
+ *)
+function xcb_connect_to_display_with_auth_info(display : PChar; auth : Pxcb_auth_info_t; screen : pcint) : Pxcb_connection_t;
+  external libXCB;
 
 
-/* xcb_xid.c */
+(* xcb_xid.c *)
 
-/**
+(**
  * @brief Allocates an XID for a new object.
  * @param c: The connection.
  * @return A newly allocated XID.
  *
  * Allocates an XID for a new object. Typically used just prior to
  * various object creation functions, such as xcb_create_window.
- */
-uint32_t xcb_generate_id(xcb_connection_t *c);
-
-
-/**
- * @}
- */
-
-#ifdef __cplusplus
-}
-#endif
-
-
-#endif /* __XCB_H__ */
-*)
+ *)
+function xcb_generate_id(c : Pxcb_connection_t) : cuint32;
+  external libXCB;
 
 implementation
 
