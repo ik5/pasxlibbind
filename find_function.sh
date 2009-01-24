@@ -66,8 +66,8 @@ if [ $# -lt "4" ]; then  # Script invoked with not enough command-line arguments
   echo    "    -v - Verbose - to see more information about "
   echo
   echo    "Example:"
-  echo    "    `basename $0` -p /usr/lib/lib\\*.so -s \"\.text\s+[0-9a-zA-Z]+.*test\" -r"
-  echo    "    `basename $0` -p /usr/lib/lib\\*.so -s \"^[0-9a-zA-Z]+ T test\" -n -r"
+  echo    "    `basename $0` -p /usr/lib/lib\\*.so -s \"\.text\s+[0-9a-zA-Z]+.*test$\" -r"
+  echo    "    `basename $0` -p /usr/lib/lib\\*.so -s \"^[0-9a-zA-Z]+ T test$\" -n -r"
   exit 65        # Exit and explain usage, if no argument(s) given.
 fi
 
@@ -107,31 +107,32 @@ fi
 found=0
 for file in $path; do
   command=`$cmd "$file" | grep $sensitive $regex "$string"`
-  if [ $verbose -eq 1 ]; then
-    echo -n "$file ($string): "
-  fi
   if [ -n "$command" ]; then
     if [ $verbose -eq 1 ]; then
-      echo -n " ["
-      echo -ne "\E[0;34m" # blue foreground
-      echo -ne "\E[4m"    # underline
-      echo -ne "\E[1m"    # bold
-      echo -n "V"
-      echo -ne "\E[m"     # reset colors to default
-      echo "] "
+      echo -e "\E[4m$file\E[m ($string) :"
+      echo -e "\t\E[1m$command\E[m"
+#      echo -n " ["
+#      echo -ne "\E[0;34m" # blue foreground
+#      echo -ne "\E[4m"    # underline
+#      echo -ne "\E[1m"    # bold
+#      echo -n "V"
+#      echo -ne "\E[m"     # reset colors to default
+#      echo "] "
     else
       echo "\"$string\" found in \"$file\""
       #exit 1
     fi
    found=1
-  else
-    if [ $verbose -eq 1 ]; then
-      echo -n " ["
-      echo -en "\E[0;31m" # red foreground
-      echo -n "X"
-      echo -en "\E[m"     # reset colors to default
-      echo "] "
-    fi
+  #else
+    #if [ $verbose -eq 1 ]; then
+      #echo -ne "\E[4m$file\E[m ($string) "
+      #echo -e "\E[0;31mNot Found\E[m"
+#      echo -n " ["
+#      echo -en "\E[0;31m" # red foreground
+#      echo -n "X"
+#      echo -en "\E[m"     # reset colors to default
+#      echo "] "
+    #fi
   fi
 done;
 
