@@ -32,13 +32,8 @@ interface
 
 uses
   ctypes,
-  xcb_types // Instead oc circular usageo f xcbproto
-  ;
-
-const
-  libXCB            = 'libxcb';
-  libXCBEvent       = 'libxcb-event';
-  libXCBRenderUtils = 'libxcb-render-util';
+  xcb_types, // Instead oc circular usageo f xcbproto
+  xcbext;
 
 (**
  * @defgroup XCB_Core_API XCB Core API

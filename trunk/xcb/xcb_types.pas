@@ -14,6 +14,11 @@ uses
   ctypes;
 
 const
+  libXCB            = 'libxcb';
+  libXCBEvent       = 'libxcb-event';
+  libXCBRenderUtils = 'libxcb-render-util';
+
+const
 (* Pre-defined constants *)
 
 (** Current protocol version *)
@@ -80,7 +85,8 @@ type
                           full_sequence : cuint32;                (**< full sequence *)
                         end;
 
- Pxcb_generic_error_t = ^Txcb_generic_error_t;
+ PPxcb_generic_error_t = ^Pxcb_generic_error_t;
+ Pxcb_generic_error_t  = ^Txcb_generic_error_t;
 (**
  * @brief Generic error.
  *
@@ -136,6 +142,7 @@ type
                       data    : PChar; (**< Data interpreted in a protocol-specific manner. *)
                     end;
 
+{ defined ay xcbext.pas [xcbext.h]
 (* xcb_ext.c *)
 (**
  * @typedef typedef struct xcb_extension_t xcb_extension_t
@@ -145,6 +152,8 @@ type
  (**< Opaque structure used as key for xcb_get_extension_data_t. *)
  Txcb_extension_t = record
                     end;
+
+}
 
 (* xproto.h *)
 (*
